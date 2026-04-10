@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt vé - CinemaHub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .seat-map {
+            display: grid;
+            grid-template-columns: repeat(10, 40px);
+            gap: 8px;
+            margin: 30px auto;
+            max-width: 500px;
+            justify-content: center;
+        }
+        .seat {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            cursor: pointer;
+            background: #444;
+            color: white;
+        }
+        .seat.available:hover { background: #00d4ff; }
+        .seat.selected { background: #e50914; }
+        .seat.taken { background: #666; cursor: not-allowed; }
+        .screen {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin: 20px auto;
+            width: 60%;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .booking-summary {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">🎥 CinemaHub</div>
+            <ul>
+                <li><a href="index.html">Trang chủ</a></li>
+                <li><a href="movies.html">Phim</a></li>
+                <li><a href="showtimes.html">Lịch chiếu</a></li>
+                <li><a href="booking.html" class="active">Đặt vé</a></li>
+                <li><a href="admin.html">Admin</a></li>
+                <li><a href="about.html">Liên hệ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="section">
+        <h2>Đặt vé xem phim</h2>
+        <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+            <div style="flex: 1;">
+                <h3>Chọn suất chiếu</h3>
+                <select id="showtime-select" style="padding:10px; width:100%; margin-bottom:20px;">
+                    <option value="">Chọn phim và suất</option>
+                </select>
+
+                <div class="screen">MÀN HÌNH</div>
+                <div class="seat-map" id="seat-map"></div>
+
+                <div style="text-align:center; margin-top:20px;">
+                    <button onclick="confirmBooking()" class="btn" style="padding:15px 40px; font-size:1.1rem;">Xác nhận đặt vé</button>
+                </div>
+            </div>
+
+            <div class="booking-summary" style="flex: 1; min-width:300px;">
+                <h3>Thông tin đặt vé</h3>
+                <p id="summary-movie">Phim: <strong>Chưa chọn</strong></p>
+                <p id="summary-time">Suất: <strong>Chưa chọn</strong></p>
+                <p id="summary-seats">Ghế: <strong>Chưa chọn</strong></p>
+                <p id="summary-total">Tổng tiền: <strong>0 VNĐ</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 CinemaHub</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        let selectedSeats = [];
+        const seatPrice = 85000;
+
+        // Dữ liệu suất chiếu mẫu
+        const showtimeOptions = [
+            { id: 1, movie: "Avengers: Endgame", time: "10:00 - Phòng 1" },
+            { id: 2, movie: "Dune: Part Two", time: "13:30 - Phòng 2" },
+            { id: 3, movie: "Avengers: Endgame", time: "16:45 - Phòng 3" }
+        ];
+
+        function populateShowtimes() {
+            const select = document.getElementById('showtime-select');
+            showtimeOptions.forEach(st => {
+                const opt = document.createElement('option');
+                opt.value = st.id;
+                opt.textContent = `${st.movie} - ${st.time}`;
+                select.appendChild(opt);
+            });
+        }
+
+        function generateSeatMap() {
+            const seatMap = document.getElementById('seat-map');
+            seatMap.innerHTML = '';
+            for (let i = 1; i <= 60; i++) {
+                const seat = document.createElement('div');
+                seat.classList.add('seat', 'available');
+                seat.textContent = i;
+                seat.onclick = () => toggleSeat(seat, i);
+                seatMap.appendChild(seat);
+            }
+        }
+
+        function toggleSeat(seatElement, seatNumber) {
+            if (seatElement.classList.contains('taken')) return;
+            
+            if (seatElement.classList.contains('selected')) {
+                seatElement.classList.remove('selected');
+                selectedSeats = selectedSeats.filter(s => s !== seatNumber);
+            } else {
+                seatElement.classList.add('selected');
+                selectedSeats.push(seatNumber);
+            }
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const movieSelect = document.getElementById('showtime-select');
+            const selectedOption = movieSelect.options[movieSelect.selectedIndex];
+            
+            document.getElementById('summary-movie').innerHTML = `Phim: <strong>${selectedOption ? selectedOption.textContent.split(' - ')[0] : 'Chưa chọn'}</strong>`;
+            document.getElementById('summary-time').innerHTML = `Suất: <strong>${selectedOption ? selectedOption.textContent.split(' - ')[1] : 'Chưa chọn'}</strong>`;
+            document.getElementById('summary-seats').innerHTML = `Ghế: <strong>${selectedSeats.join(', ') || 'Chưa chọn'}</strong>`;
+            document.getElementById('summary-total').innerHTML = `Tổng tiền: <strong>${(selectedSeats.length * seatPrice).toLocaleString('vi-VN')} VNĐ</strong>`;
+        }
+
+        function confirmBooking() {
+            if (selectedSeats.length === 0) {
+                alert("Vui lòng chọn ít nhất một ghế!");
+                return;
+            }
+            alert(`Đặt vé thành công!\n\nPhim: ${document.getElementById('summary-movie').textContent}\nGhế: ${selectedSeats.join(', ')}\nTổng: ${(selectedSeats.length * seatPrice).toLocaleString('vi-VN')} VNĐ`);
+            // Reset sau khi đặt
+            selectedSeats = [];
+            generateSeatMap();
+            updateSummary();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateShowtimes();
+            generateSeatMap();
+            document.getElementById('showtime-select').addEventListener('change', updateSummary);
+        });
+    </script>
+</body>
+</html>

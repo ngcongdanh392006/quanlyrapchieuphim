@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phim - CinemaHub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">🎥 CinemaHub</div>
+            <ul>
+                <li><a href="index.html">Trang chủ</a></li>
+                <li><a href="movies.html" class="active">Phim</a></li>
+                <li><a href="showtimes.html">Lịch chiếu</a></li>
+                <li><a href="booking.html">Đặt vé</a></li>
+                <li><a href="admin.html">Admin</a></li>
+                <li><a href="about.html">Liên hệ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="section">
+        <h2>Tất cả phim</h2>
+        <div class="movie-grid" id="all-movies"></div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 CinemaHub - Quản lý rạp chiếu phim</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        function renderAllMovies() {
+            const container = document.getElementById('all-movies');
+            container.innerHTML = movies.map(movie => `
+                <div class="movie-card">
+                    <img src="${movie.poster}" alt="${movie.title}">
+                    <div class="movie-info">
+                        <h3>${movie.title}</h3>
+                        <p>${movie.genre} | ${movie.duration}</p>
+                        <p>⭐ ${movie.rating}</p>
+                        <p style="font-size:0.9rem; margin:8px 0;">${movie.description}</p>
+                        <a href="booking.html?movie=${movie.id}" class="btn" style="display:block; text-align:center;">Đặt vé ngay</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAllMovies();
+        });
+    </script>
+</body>
+</html>

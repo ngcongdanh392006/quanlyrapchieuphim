@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch chiếu - CinemaHub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #1a1a2e; color: white; }
+        .showtime-btn { background: #e50914; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">🎥 CinemaHub</div>
+            <ul>
+                <li><a href="index.html">Trang chủ</a></li>
+                <li><a href="movies.html">Phim</a></li>
+                <li><a href="showtimes.html" class="active">Lịch chiếu</a></li>
+                <li><a href="booking.html">Đặt vé</a></li>
+                <li><a href="admin.html">Admin</a></li>
+                <li><a href="about.html">Liên hệ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="section">
+        <h2>Lịch chiếu hôm nay (10/04/2026)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Phim</th>
+                    <th>Phòng</th>
+                    <th>Giờ chiếu</th>
+                    <th>Thời lượng</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="showtimes-table"></tbody>
+        </table>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 CinemaHub</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        const showtimes = [
+            { movie: "Avengers: Endgame", room: "Phòng 1", time: "10:00", duration: "181 phút", status: "Đang chiếu" },
+            { movie: "Dune: Part Two", room: "Phòng 2", time: "13:30", duration: "166 phút", status: "Sắp chiếu" },
+            { movie: "Avengers: Endgame", room: "Phòng 3", time: "16:45", duration: "181 phút", status: "Đang chiếu" },
+            { movie: "Dune: Part Two", room: "Phòng 1", time: "19:00", duration: "166 phút", status: "Sắp chiếu" },
+            { movie: "Oppenheimer", room: "Phòng 4", time: "20:30", duration: "180 phút", status: "Đang chiếu" }
+        ];
+
+        function renderShowtimes() {
+            const tbody = document.getElementById('showtimes-table');
+            tbody.innerHTML = showtimes.map(st => `
+                <tr>
+                    <td>${st.movie}</td>
+                    <td>${st.room}</td>
+                    <td>${st.time}</td>
+                    <td>${st.duration}</td>
+                    <td>${st.status}</td>
+                    <td><button class="showtime-btn" onclick="bookFromShowtime('${st.movie}')">Đặt vé</button></td>
+                </tr>
+            `).join('');
+        }
+
+        function bookFromShowtime(movie) {
+            alert(`Chuyển đến trang đặt vé cho phim: ${movie}`);
+            window.location.href = `booking.html?movie=${encodeURIComponent(movie)}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', renderShowtimes);
+    </script>
+</body>
+</html>
